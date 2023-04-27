@@ -1,0 +1,42 @@
+﻿<!-- cần chụp mô hình từ controller-->
+@model IEnumerable<Category>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary"> Category List</h2>
+            
+        </div>
+        <div class="col-6 text-end">
+            <!-- dẫn đến CategoryController và method Create-->
+            <a asp-controller="Category" asp-action="Create" class="btn btn-primary"> <i class="bi bi-plus-circle"></i> &nbsp; Create New Category </a>
+        </div>
+    </div>
+    <br /> <br />
+
+<!-- Tạo giao diện-->
+<table class ="table table-bordered table-striped">
+    <!-- Các cột-->
+    <thead>
+        <tr>
+            <th>Caterory Name</th>
+            <th>Display Order</th>
+        </tr>
+    </thead>
+    <!-- Lấy dữ liệu từ DB-->
+    <tbody>
+        <!-- Dùng foreach để đi qua tất cả, dùng var và trỏ đối tượng đến model được định nghĩa từ controller(dòng 1-2)-->
+        @foreach(var obj in Model)
+        {
+            <tr>
+                <!-- từ object trỏ đến các cột trong DB-->
+                <td width="50%">@obj.Name</td>
+                <td width="30%">@obj.DisplayOrder</td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
