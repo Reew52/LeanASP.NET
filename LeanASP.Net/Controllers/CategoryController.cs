@@ -52,6 +52,8 @@ namespace LeanASP.Net.Controllers
                 _db.Categories.Add(obj);
                 // lưu vào DB
                 _db.SaveChanges();
+                // Dữ liệu tạm thời
+                TempData["success"] = "Category create successfully!";
                 // chuyển hướng tới index
                 return RedirectToAction("Index");
             }
@@ -59,5 +61,83 @@ namespace LeanASP.Net.Controllers
             // dữ liệu không hợp lệ, trả về view hiển thị dữ liệu đã nhập và thông báo lỗi
             return View(obj);
         }
+
+        // GET
+        public IActionResult Edit(int? id)
+        {
+            if(id == null || id  == 0)
+            {
+                return NotFound();
+            }
+            // gán id tìm được bằng var
+            var categoryFormDb = _db.Categories.Find(id);
+            //var categoryFormDbFirst = _db.Categories.FirstOrDefault(u=>u.Id==id);
+            //var categoryFormDbSingle = _db.Categories.SingleOrDefault(u => u.Id == id);
+            if (categoryFormDb == null)
+            {
+                return NotFound();
+            }
+            // trả view cùng với biến
+            return View(categoryFormDb);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Category obj)
+        {
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("name", "The Display Order cannot exactly match the Name");
+            }
+            if (ModelState.IsValid)
+            {
+                // thực hiện update
+                _db.Categories.Update(obj);
+                // lưu vào DB
+                _db.SaveChanges();
+                // dữ liệu tạm thời
+                TempData["success"] = "Category updated successfully!";
+                // chuyển hướng tới index
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+        // GET
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            // gán id tìm được bằng var
+            var categoryFormDb = _db.Categories.Find(id);
+            if (categoryFormDb == null)
+            {
+                return NotFound();
+            }
+            // trả view cùng với biến
+            return View(categoryFormDb);
+        }
+        // đặt tên cho action
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePOST(int? id)
+        {
+            // tìm id
+            var obj = _db.Categories.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            // thực hiện xóa
+            _db.Categories.Remove(obj);
+            // lưu vào DB
+            _db.SaveChanges();
+            // dữ liệu tạm thời
+            TempData["success"] = "Category deleted successfully!";
+            // chuyển hướng tới index
+            return RedirectToAction("Index");
+        }
+
     }
 }
