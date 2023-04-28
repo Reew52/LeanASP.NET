@@ -27,5 +27,37 @@ namespace LeanASP.Net.Controllers
             // để sử dụng ta cần gọi sang view 
             return View(objCategoryList);
         }
+        // GET
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST (một phương thức là post chúng ta cần viết thuộc tính HTTP POST)
+        [HttpPost]
+        /* xác thực mã thông báo giả mạo có mã thông báo chống giả mạo hay không
+           để trợ giúp và ngăn chặn cuộc tấn công giả mạo yêu cầu trên nhiều trang web*/
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Category obj)
+        {
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                // hiển thị lỗi ở CustomError
+                ModelState.AddModelError("name","The Display Order cannot exactly match the Name");
+            }
+            // kiểm tra tính hợp lệ của mô hình (ModelState.IsValid) trước khi lưu đối tượng mới vào cơ sở dữ liệu.
+            if (ModelState.IsValid)
+            {
+                // tạo đối tượng mới của lớp category
+                _db.Categories.Add(obj);
+                // lưu vào DB
+                _db.SaveChanges();
+                // chuyển hướng tới index
+                return RedirectToAction("Index");
+            }
+
+            // dữ liệu không hợp lệ, trả về view hiển thị dữ liệu đã nhập và thông báo lỗi
+            return View(obj);
+        }
     }
 }
